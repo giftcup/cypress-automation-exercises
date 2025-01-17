@@ -1,11 +1,18 @@
 describe("Register User", () => {
 
+    beforeEach(() => {
+        cy.fixture("user/user.json").then((user) => {
+            cy.wrap(user).as("userData");
+        })
+    })
+
     it("registers a new user", () => {
-        cy.visit("https://automationexercise.com/")
+        cy.get('@userData').then((userData) => {
+            cy.visit("https://automationexercise.com/")
         cy.get("[href='/login']").contains("Signup / Login").click()
         
         cy.location("pathname").should("eq", "/login")
-        cy.getByQa("signup-name").type("Jonahson")
+        cy.getByQa("signup-name").type(userData.name)
         cy.getByQa("signup-email").type("jonahson@rmail.cm")
         cy.getByQa("signup-button").click()
 
@@ -33,6 +40,7 @@ describe("Register User", () => {
 
         cy.location("pathname").contains("/")
         cy.get("li a").contains(/logged in as/i)
+        })
     })
 })
 
