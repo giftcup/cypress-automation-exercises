@@ -24,6 +24,7 @@ export class RegisterPage {
     month_dob_identifier = "[data-qa='months']"
     year_dob_identifier = "[data-qa='years']"
     country_identifier = "[data-qa='days']"
+    loggedin_identifier = ":nth-child(10) > a"
 
 
     verifyRegistrationPageUrl(){

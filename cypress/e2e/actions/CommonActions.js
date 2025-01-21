@@ -23,4 +23,10 @@ export class CommonActions{
         cy.get(dropdown_identifier).select(value)
     }
 
+    // loadFixtureData(fixture_file_path) {
+    //     cy.fixture(fixture_file_path).then((user) => {
+    //         cy.wrap(user).as("userData")
+    //     })
+    // }
+
 }
