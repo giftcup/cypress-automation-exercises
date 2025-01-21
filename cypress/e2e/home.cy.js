@@ -1,12 +1,18 @@
+import { Homepage } from "./pages/HomePage"
+
+const homepage = new Homepage();
+
 describe("test the home page", () => {
     beforeEach(() => {
         cy.visit("https://automationexercise.com/")
+        homepage.pageLogoIsVisible()
     })
     
     context("Hero section", () => {
         it("checks if heading is contains correct text", () => {
             cy.get("h1").eq(0).contains("AutomationExercise")
         })
+        
         it("buttons contain correct text", () => {
             cy.get('button').eq(0).contains("Test Cases")
             cy.get('button').eq(1).contains("APIs list for practice")

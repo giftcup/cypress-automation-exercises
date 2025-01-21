@@ -1,4 +1,15 @@
+import { CommonActions } from "./actions/CommonActions";
+import { LoginPage } from "./pages/LoginPage";
+import { Homepage } from "./pages/HomePage";
+import { RegisterPage } from "./pages/RegisterPage";
+
+const loginpage = new LoginPage();
+const homepage = new Homepage();
+const registration = new RegisterPage();
+const ca = new CommonActions();
+
 describe("Register User", () => {
+    let identifiers_to_check = [registration.gender_field_identifier, registration.newsletter_field_identifier, registration.optin_field_identifier]
 
     beforeEach(() => {
         cy.fixture("user/user.json").then((user) => {
@@ -9,38 +20,41 @@ describe("Register User", () => {
     it("registers a new user", () => {
         cy.get('@userData').then((userData) => {
             cy.visit("https://automationexercise.com/")
-            cy.get("[href='/login']").contains("Signup / Login").click()
+            homepage.pageLogoIsVisible()
             
+            cy.get("[href='/login']").contains("Signup / Login").click()
             cy.location("pathname").should("eq", "/login")
-            cy.getByQa("signup-name").type(userData.name)
-            cy.getByQa("signup-email").type(userData.email)
-            cy.getByQa("signup-button").click()
+            loginpage.enterSignupUsername(userData.name)
+            loginpage.enterSignupEmail(userData.email)
+            loginpage.clickSignupButton()
 
-            cy.location("pathname").should("eq", "/signup")
-            cy.get("h2.title b").eq(0).contains(/enter account information/i)
-            cy.get("#id_gender2").check()
-            cy.getByQa("password").type(userData.password)
+            registration.verifyRegistrationPageIsOpen()
+
+            // Loops through all input identifiers for check buttons and checks them
+            identifiers_to_check.forEach((identifier) => {
+                ca.checkInputElement(identifier)
+            })
+
             cy.getByQa("days").select("16")
             cy.getByQa("years").select("1998")
-            cy.get("#newsletter").check()
-            cy.get("#optin").check()
-            cy.getByQa("first_name").type(userData.first_name)
-            cy.getByQa("last_name").type(userData.last_name)
-            cy.getByQa("company").type(userData.company)
-            cy.getByQa("address").type(userData.address)
             cy.getByQa("country").select("United States")
-            cy.getByQa("state").type(userData.state)
-            cy.getByQa("city").type(userData.city)
-            cy.getByQa("zipcode").type(userData.zipcode)
-            cy.getByQa("mobile_number").type(userData.mobile_number)
-            cy.getByQa("create-account").click()
+            registration.enterPassword(userData.password)
+            registration.enterFirstName(userData.first_name)
+            registration.enterLastName(userData.last_name)
+            registration.enterAddress(userData.address)
+            registration.enterCompany(userData.company)
+            registration.enterCity(userData.city)
+            registration.enterZipcode(userData.zipcode)
+            registration.enterMobilenumber(userData.mobile_number)
+            registration.enterState(userData.state)
+            registration.clickCreateAccountButton()
 
-            cy.location("pathname").should("eq", "/account_created")
-            cy.getByQa("account-created").contains("Account Created")
-            cy.getByQa("continue-button").contains("Continue").click()
+            ca.verifyWebElementExist(registration.continue_button_account_created_identifier)
+            registration.clickOnContinueButton()
 
-            cy.location("pathname").contains("/")
-            cy.get("li a").contains(/logged in as/i)
+            // cy.location("pathname").contains("/")
+            // cy.get('.shop-menu > .nav > :nth-child(5) > a')
+            cy.get(":nth-child(10) > a").contains(/logged in as/i)
         })
     })
 })
